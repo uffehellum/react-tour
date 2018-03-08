@@ -95,7 +95,7 @@ Numbers.list = _.range(1, 10)
 class Game extends React.Component {
   static randomStars = () => Math.floor(Math.random() * 9) + 1
 
-  initialState = {
+  static initialState = () => {
   	selectedNumbers: [], 
     usedNumbers: [],
 		numberOfStars: Game.randomStars(),
@@ -104,7 +104,7 @@ class Game extends React.Component {
     doneStatus: null,
   }
 
-  state = this.initialState
+  state = Game.initialState()
   
   selectNumber = (number) => {
   	if (this.state.selectedNumbers.includes(number)) return
@@ -137,9 +137,7 @@ class Game extends React.Component {
     }
   }, this.updateDoneStatus)}
   
-  resetGame = () => {
-      this.setState(()=> this.initialState)
-  }
+  resetGame = () => this.setState(Game.initialState())
 
   static isPossibleCombinationSum = (arr, x) => {
     if (arr.indexOf(x) >= 0) return true
