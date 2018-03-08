@@ -53,6 +53,9 @@ const DoneFrame = (props) => {
 	return(
   	<div className="text-center">
     	<h2>{props.doneStatus}</h2>
+        <button className="btn btn-secondary" onClick={props.resetGame}>
+            Spil en gang til
+        </button>
     </div>
   )
 }
@@ -92,7 +95,7 @@ Numbers.list = _.range(1, 10)
 class Game extends React.Component {
   static randomStars = () => Math.floor(Math.random() * 9) + 1
 
-	state = {
+  initialState = {
   	selectedNumbers: [], 
     usedNumbers: [],
 		numberOfStars: Game.randomStars(),
@@ -100,6 +103,8 @@ class Game extends React.Component {
     redraws: 5,
     doneStatus: null,
   }
+
+  state = this.initialState
   
   selectNumber = (number) => {
   	if (this.state.selectedNumbers.includes(number)) return
@@ -132,6 +137,10 @@ class Game extends React.Component {
     }
   }, this.updateDoneStatus)}
   
+  resetGame = () => {
+      this.setState(()=> this.initialState)
+  }
+
   static isPossibleCombinationSum = (arr, x) => {
     if (arr.indexOf(x) >= 0) return true
     while (arr.length > 0 && arr[arr.length - 1] > x) arr.pop()
@@ -168,7 +177,7 @@ class Game extends React.Component {
     	selectedNumbers: []
     }), this.updateDoneStatus)}
       
-	render = () =>
+  render = () =>
   	<div className="container">
     	<h3>Spil Ni Tal</h3>
       <hr />
@@ -191,7 +200,10 @@ class Game extends React.Component {
       </div>
       <br/>
       {this.state.doneStatus?
-      	<DoneFrame doneStatus={this.state.doneStatus} />
+        <DoneFrame 
+          doneStatus={this.state.doneStatus} 
+          resetGame={this.resetGame}
+          />
       :
         <Numbers 
           selectedNumbers={this.state.selectedNumbers} 
