@@ -2,7 +2,7 @@
 import express from 'express'
 
 let app = express()
-
-app.get('/', (req, res) => res.send('Hallo'))
+app.use(express.static('public'))
+// app.get('/', (req, res) => res.send('Hallo Verden 2!'))
 
 app.listen(3000)
