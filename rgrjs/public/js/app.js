@@ -1,8 +1,9 @@
-console.log(React)
+var react = require('react')
+var reactDOM = require('react-dom')
 
-class Greeting extends React.Component {
+class Greeting extends react.Component {
     render() {
-        return React.createElement("div", null, "hello from react") // <h1>Hello, {this.props.name}</h1>;
+        return react.createElement("div", null, "Hallo fra react med webpack") // <h1>Hello, {this.props.name}</h1>;
     }
 }
 
@@ -11,5 +12,5 @@ class Greeting extends React.Component {
 //         return React.createElement("div", null, "hello from react")
 //     }
 // })
-
-ReactDOM.render(React.createElement(Greeting), document.getElementById("main"))
+console.log('klar til react')
+reactDOM.render(react.createElement(Greeting), document.getElementById("main"))
