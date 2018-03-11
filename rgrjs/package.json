@@ -13,6 +13,8 @@
     "babel-loader": "^7.1.4",
     "babel-preset-react": "^6.24.1",
     "express": "^4.16.2",
+    "kerberos": "0.0.23",
+    "mongodb": "^3.0.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },
