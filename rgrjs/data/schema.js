@@ -7,9 +7,17 @@ import {
 } from 'graphql'
 
 let data = [
-    {_id: 'a1', title: 'title', url: 'http://url.com'},
-    {_id: 'a2', title: 'title 2', url: 'http://url2.com'},
+    { _id: 'a1', title: 'title', url: 'http://url.com' },
+    { _id: 'a2', title: 'title 2', url: 'http://url2.com' },
 ]
+
+function getLinks(db) {
+    const col = db.collection('links')
+    col.find({}).toArray((err, links) => {
+        if(err) throw err
+        res.json(links)
+    })
+}
 
 let linkType = new GraphQLObjectType({
     name: 'Link',
@@ -20,26 +28,23 @@ let linkType = new GraphQLObjectType({
     })
 })
 
-let schema = new GraphQLSchema({
-    query: new GraphQLObjectType({
-        name: 'Query',
-        fields: () => ({
-            links: {
-                type: new GraphQLList(linkType),
-                resolve: () => data,
-            },
+let Schema = (db) => {
+
+    let schema = new GraphQLSchema({
+        query: new GraphQLObjectType({
+            name: 'Query',
+            fields: () => ({
+                links: {
+                    type: new GraphQLList(linkType),
+                    resolve: () => db
+                        .collection('links')
+                        .find({})
+                        .toArray()
+                },
+            })
         })
     })
-})
 
-    // mutation: new GraphQLObjectType({
-    //     name: 'Mutation',
-    //     fields: () => ({
-    //         incrementCounter: {
-    //             type: GraphQLInt,
-    //             resolve: () => ++counter,
-    //         }
-    //     })
-    // })
-
-export default schema
+    return schema
+}
+export default Schema
