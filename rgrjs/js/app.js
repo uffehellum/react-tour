@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Hello from './components/hello'
+import Main from './components/main'
 
 // console.log('klar til react')
 
-ReactDOM.render(<Hello />, document.getElementById("main"))
+ReactDOM.render(<Main />, document.getElementById("main"))
