@@ -20,10 +20,10 @@ MongoClient.connect(MONGO_URL, null, (err, client) => {
     
 })
 
-app.get('/data/links', (req, res) => {
-    const col = db.collection('links')
-    col.find({}).toArray((err, links) => {
-        if(err) throw err
-        res.json(links)
-    })
-})
+// app.get('/data/links', (req, res) => {
+//     const col = db.collection('links')
+//     col.find({}).toArray((err, links) => {
+//         if(err) throw err
+//         res.json(links)
+//     })
+// })
