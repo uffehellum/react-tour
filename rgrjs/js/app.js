@@ -4,4 +4,4 @@ import Main from './components/main'
 
 // console.log('klar til react')
 
-ReactDOM.render(<Main />, document.getElementById("main"))
+ReactDOM.render(<Main limit={4}/>, document.getElementById("main"))
