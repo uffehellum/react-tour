@@ -4,10 +4,23 @@ import GraphQLHTTP from 'express-graphql'
 import {MongoClient} from 'mongodb'
 import {MONGO_URL} from './localconfig'
 
-let app = express()
-app.use(express.static('public'))
+(async () => {
+    let client = await MongoClient.connect(MONGO_URL)
+    // console.log('client', client)
+    let db = client.db('rgrjs')
+    // console.log('db', db)
+
+    let app = express()
+    app.use(express.static('public'))
+    app.use('/graphql', GraphQLHTTP({
+        schema: Schema(db),
+        graphiql: true,
+    }))
+    app.listen(3000, () => console.log('Lytter på port 3000'))
+})()
 
 
+/*
 let db;
 MongoClient.connect(MONGO_URL, null, (err, client) => {
     if(err) throw err
@@ -19,7 +32,7 @@ MongoClient.connect(MONGO_URL, null, (err, client) => {
     }))
     
 })
-
+*/
 // app.get('/data/links', (req, res) => {
 //     const col = db.collection('links')
 //     col.find({}).toArray((err, links) => {
