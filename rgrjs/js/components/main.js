@@ -1,11 +1,10 @@
 import React from 'react'
-import API from '../API'
-import LinkStore from '../stores/LinkStore'
 import PropTypes from 'prop-types'
+// import Relay from 'react-relay'
 
-let _getAppState = () => {
-    return {links: LinkStore.getAll() }
-} 
+import { graphql, QueryRenderer } from 'react-relay';
+
+import Link from './link'
 
 class Main extends React.Component {
     static propTypes = {
@@ -14,37 +13,89 @@ class Main extends React.Component {
     static defaultProps = {
         limit: 2,
     }
-    state = _getAppState()
-    
-    componentDidMount(){
-        API.fetchLinks()
-        LinkStore.on("change", this.onChange)
-    }
-    componentWillUnmount() {
-        LinkStore.removeListener("change", this.onChange)
-    }
-    onChange = () => {
-        console.log('4. onChange')
-        this.setState(_getAppState())
-    }
     render() {
-        const content = this.state.links
-            .slice(0, this.props.limit)
-            .map(link => 
-            <li key={link._id}>
-                <a href={link.url}>
-                    {link.title}
-                </a>
-            </li>)
         return (
-        <div>
-            <h3>Bogmærker</h3>
-            <ul>
-                {content}
-            </ul>
-        </div>
+            <div>
+                {graphql`
+            query UserQuery {
+                store {
+                    linkConnection(first:2, after:"YXJyYXljb25uZWN0aW9uOjM="){
+                        pageInfo {
+                            hasNextPage
+                        }
+                        edges {
+                            cursor
+                            node {
+                            id
+                            title    
+                                url
+                            }
+                        }      
+                    }
+                }  
+            }
+            `}
+            </div>
         )
+        // return (
+        //     <QueryRenderer
+        //         environment={environment}
+        //         query={graphql`
+        //     query UserQuery {
+        //         store {
+        //             linkConnection(first:2, after:"YXJyYXljb25uZWN0aW9uOjM="){
+        //                 pageInfo {
+        //                     hasNextPage
+        //                 }
+        //                 edges {
+        //                     cursor
+        //                     node {
+        //                     id
+        //                     title    
+        //                         url
+        //                     }
+        //                 }      
+        //             }
+        //         }  
+        //     }
+        //     `}
+        //         variables={{}}
+        //         render={({ error, props }) => {
+        //             if (error) {
+        //                 return <div>Error!</div>;
+        //             }
+        //             if (!props) {
+        //                 return <div>Loading...</div>;
+        //             }
+        //             return <div>User ID: {props.viewer.id}</div>;
+        //         }}
+        //     />)
+
+
+        // const content = this.props.store.links
+        //     .slice(0, this.props.limit)
+        //     .map(link => <Link key={link._id} link={link} />)
+        // return (
+        // <div>
+        //     <h3>Bogmærker</h3>
+        //     <ul>
+        //         {content}
+        //     </ul>
+        // </div>
+        // )
     }
 }
 
+// Main = Relay.createFragmentContainer(Main, {
+//     fragments: {
+//         store: () => RelayQL`
+//             fragment on Store {
+//                 links {
+//                     _id,
+//                     ${Link.getFragment('link')}
+//                 }
+//             }
+//         `
+//     }
+// })
 export default Main
