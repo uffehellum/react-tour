@@ -12,23 +12,12 @@ import { resolve } from 'url';
 import {
     connectionDefinitions,
     connectionArgs,
-    connectionFromPromisedArray
+    connectionFromPromisedArray,
+    globalIdField,
+    mutationWithClientMutationId
 } from 'graphql-relay'
 
 let Schema = (db) => {
-
-    let data = [
-        { _id: 'a1', title: 'title', url: 'http://url.com' },
-        { _id: 'a2', title: 'title 2', url: 'http://url2.com' },
-    ]
-
-    function getLinks(db) {
-        const col = db.collection('links')
-        col.find({}).toArray((err, links) => {
-            if(err) throw err
-            res.json(links)
-        })
-    }
 
     let store = {}
 
@@ -52,6 +41,7 @@ let Schema = (db) => {
     let storeType = new GraphQLObjectType({
         name: 'Store',
         fields: () => ({
+            id: globalIdField("Store"),
             linkConnection: {
                 type: linkConnection.connectionType,
                 args: connectionArgs,
@@ -60,6 +50,27 @@ let Schema = (db) => {
                     args)
             },
         })
+    })
+
+    let createLinkMutation = new mutationWithClientMutationId({
+        name: 'CreateLink',
+        inputFields: {
+            title: { type: GraphQLNonNull (GraphQLString)},
+            url: { type: GraphQLNonNull (GraphQLString)},
+        },
+        outputFields: {
+            linkEdge: {
+                type: linkConnection.edgeType,
+                resolve: (obj) => ({node: obj.ops[0], cursor: obj.insertedId})
+            },
+            store: {
+                type: storeType,
+                resolve: () => store
+            }
+        },
+        mutateAndGetPayload: ({title, url}) => 
+            db.collection('links').insertOne({title, url})
+        
     })
 
     let schema = new GraphQLSchema({
@@ -71,9 +82,17 @@ let Schema = (db) => {
                     resolve: () => store
                 }
             })
+        }),
+
+        mutation: new GraphQLObjectType({
+            name: 'Mutation',
+            fields: () => ({
+                createLink: createLinkMutation
+            })
         })
     })
     return schema
 }
 
 export default Schema
+
